@@ -103,10 +103,9 @@ body {
   border-radius: 10px;
 }
 
-.restart:hover {
+.restart:hover:before {
   animation-play-state: paused;
 }
-/* nie działa */
 
 .header {
   background-color: black;
