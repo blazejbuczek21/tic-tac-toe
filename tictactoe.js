@@ -143,15 +143,17 @@ const playerWon = () => {
 };
 
 const restartGame = () => {
-  board.fill(null);
-  cells.forEach((cell) => {
-    cell.innerText = "";
-    cell.classList.remove("x-winner");
-    cell.classList.remove("o-winner");
-    moves = 0;
-    player = x;
-    startGame();
-  });
+  if (isMakingMove == false) {
+    board.fill(null);
+    cells.forEach((cell) => {
+      cell.innerText = "";
+      cell.classList.remove("x-winner");
+      cell.classList.remove("o-winner");
+      moves = 0;
+      player = x;
+      startGame();
+    });
+  }
 };
 
 restart.addEventListener("click", restartGame);
