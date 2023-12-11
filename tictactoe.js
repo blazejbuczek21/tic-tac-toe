@@ -138,7 +138,7 @@ const restartGame = () => {
   if (isMakingMove == false) restartBody();
 };
 
-restartBody = () => {
+const restartBody = () => {
   board.fill(null);
   cells.forEach((cell) => {
     cell.innerText = "";
