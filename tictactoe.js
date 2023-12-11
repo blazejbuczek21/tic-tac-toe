@@ -135,17 +135,19 @@ const paintCells = (a, b, c) => {
 };
 
 const restartGame = () => {
-  if (isMakingMove == false) {
-    board.fill(null);
-    cells.forEach((cell) => {
-      cell.innerText = "";
-      cell.classList.remove("x-winner");
-      cell.classList.remove("o-winner");
-      moves = 0;
-      player = x;
-      startGame();
-    });
-  }
+  if (isMakingMove == false) restartBody();
+};
+
+restartBody = () => {
+  board.fill(null);
+  cells.forEach((cell) => {
+    cell.innerText = "";
+    cell.classList.remove("x-winner");
+    cell.classList.remove("o-winner");
+    moves = 0;
+    player = x;
+    startGame();
+  });
 };
 
 restart.addEventListener("click", restartGame);
