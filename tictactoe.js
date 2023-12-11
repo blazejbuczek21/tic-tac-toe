@@ -29,31 +29,34 @@ const winCombinations = [
 ];
 
 const computerGame = () => {
-  isComputerPlayer = true;
-  computer.classList.add("header_item_active");
-  players.classList.remove("header_item_active");
-  restartGame();
-  startGame();
+  if (isMakingMove == false) {
+    isComputerPlayer = true;
+    computer.classList.add("header_item_active");
+    players.classList.remove("header_item_active");
+    restartGame();
+    startGame();
+  }
 };
 
 const playerGame = () => {
-  isComputerPlayer = false;
-  players.classList.add("header_item_active");
-  computer.classList.remove("header_item_active");
-  restartGame();
-  startGame();
+  if (isMakingMove == false) {
+    isComputerPlayer = false;
+    players.classList.add("header_item_active");
+    computer.classList.remove("header_item_active");
+    restartGame();
+    startGame();
+  }
 };
 
 const startGame = () => {
   cells.forEach((cell) => cell.addEventListener("click", cellClicked));
   info.style.color = player.color;
-  if (isComputerPlayer == false) {
-    info.innerText = `Player ${player.symbol}'s turn`;
-  } else if (isComputerPlayer == true && player == x) {
-    info.innerText = `Your turn ${player.symbol}`;
-  } else {
-    info.innerText = `${player.symbol} is thinking`;
-  }
+  if (isComputerPlayer == false)
+    return (info.innerText = `Player ${player.symbol}'s turn`);
+  if (isComputerPlayer == true && player == x)
+    return (info.innerText = `Your turn ${player.symbol}`);
+  if (isComputerPlayer == true && player == o)
+    return (info.innerText = `${player.symbol} is thinking`);
 };
 
 const cellClicked = (e) => {
@@ -63,83 +66,72 @@ const cellClicked = (e) => {
     board[id] = player;
     e.target.innerText = player.symbol;
     e.target.style.color = player.color;
-    if (playerWon() !== false) {
-      cells.forEach((cell) => cell.removeEventListener("click", cellClicked));
-      info.innerText = `Player ${player.symbol} won`;
-      info.style.color = player.color;
-    } else if (moves === 9) {
-      info.innerText = "Draw";
-      info.style.color = "black";
-    } else {
-      player = player === x ? o : x;
-      info.innerText = `Player ${player.symbol}'s move`;
-      info.style.color = player.color;
+    logic();
+  }
+};
 
-      if (player === o && isComputerPlayer === true) {
-        info.innerText = `${player.symbol} is thinking`;
-        info.style.color = player.color;
-        makeMove();
-      } else if (player === x && isComputerPlayer === true) {
-        info.innerText = `Your turn ${player.symbol}`;
-      }
-    }
+const logic = () => {
+  if (playerWon() !== false) {
+    cells.forEach((cell) => cell.removeEventListener("click", cellClicked));
+    info.innerText = `Player ${player.symbol} won`;
+    info.style.color = player.color;
+    return;
+  }
+  if (moves === 9) {
+    info.innerText = "Draw";
+    info.style.color = "black";
+    return;
+  }
+  player = player === x ? o : x;
+  info.innerText = `Player ${player.symbol}'s move`;
+  info.style.color = player.color;
+
+  if (player === o && isComputerPlayer === true) {
+    info.innerText = `${player.symbol} is thinking`;
+    info.style.color = player.color;
+    makeMove();
+    return;
+  }
+  if (player === x && isComputerPlayer === true) {
+    info.innerText = `Your turn ${player.symbol}`;
+    return;
   }
 };
 
 const makeMove = () => {
   isMakingMove = true;
-
   setTimeout(() => {
     let emptyCells = [];
     for (let i = 0; i < board.length; i++) {
-      if (!board[i]) {
-        emptyCells.push(i);
-      }
+      if (!board[i]) emptyCells.push(i);
     }
-
-    if (emptyCells.length > 0) {
-      let randomIndex = Math.floor(Math.random() * emptyCells.length);
-      let move = emptyCells[randomIndex];
-      board[move] = player;
-      cells[move].innerText = player.symbol;
-      cells[move].style.color = player.color;
-      moves++;
-
-      if (playerWon() !== false) {
-        cells.forEach((cell) => cell.removeEventListener("click", cellClicked));
-        info.innerText = `Player ${player.symbol} won`;
-        info.style.color = player.color;
-      } else if (moves === 9) {
-        info.innerText = "Draw";
-        info.style.color = "black";
-      } else {
-        player = player === x ? o : x;
-        info.innerText = `Your move  ${player.symbol}`;
-        info.style.color = player.color;
-      }
-    }
-
+    let randomIndex = Math.floor(Math.random() * emptyCells.length);
+    let move = emptyCells[randomIndex];
+    board[move] = player;
+    cells[move].innerText = player.symbol;
+    cells[move].style.color = player.color;
+    moves++;
     isMakingMove = false;
-  }, 700);
+    logic();
+  }, 1000);
 };
+
 const playerWon = () => {
   for (const combinations of winCombinations) {
     let [a, b, c] = combinations;
-    if (board[a] && board[a] == board[b] && board[b] == board[c]) {
-      if (board[a] === o) {
-        cells[a].classList.add("o-winner");
-        cells[b].classList.add("o-winner");
-        cells[c].classList.add("o-winner");
-      } else if (board[a] === x) {
-        cells[a].classList.add("x-winner");
-        cells[b].classList.add("x-winner");
-        cells[c].classList.add("x-winner");
-      }
-
+    if (board[a] && board[a] === board[b] && board[b] === board[c]) {
+      paintCells(a, b, c);
       return [a, b, c];
     }
   }
   return false;
+};
+
+const paintCells = (a, b, c) => {
+  const winnerClass = player.symbol.toLowerCase() + "-winner";
+  cells[a].classList.add(winnerClass);
+  cells[b].classList.add(winnerClass);
+  cells[c].classList.add(winnerClass);
 };
 
 const restartGame = () => {
